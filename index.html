@@ -316,7 +316,7 @@
   <div class="topbar hidden" id="topbar">
     <div class="progress-head">
       <span class="eyebrow" id="eyebrow">Manhã</span>
-      <span class="stepcount" id="stepcount">1 / 9</span>
+      <span class="stepcount" id="stepcount">1 / 11</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
   </div>
@@ -351,12 +351,17 @@ const SECTIONS = {
   estadoMental: {
     eyebrow:'Antes de começar', title:'Estado mental',
     hint:'Como você percebe seu estado agora? Pode marcar mais de um.',
-    checks:['Limpo','Flexível','Presente','Corpo leve','Corpo contraído','Túnel','Cobrança','No futuro','Compulsão','Ansioso','Pressa','Medo','Necessidade de provar algo','Cansado mentalmente','Cansado fisicamente']
+    checks:['Limpo','Flexível','Presente','Neutro','Corpo leve','Corpo contraído','Túnel','Cobrança','No futuro','Compulsão','Ansioso','Pressa','Medo','Necessidade de provar algo','Cansado mentalmente','Cansado fisicamente']
   },
   acordar: {
     eyebrow:'Manhã', title:'Como acordei?',
     hint:'Marque tudo que reconhecer. Não precisa ser coerente.',
     checks:['Disposto','Sonolento','Torpor','Preguiça','Ansioso','Corpo leve','Corpo contraído']
+  },
+  sono: {
+    eyebrow:'Noite anterior', title:'Encerramento do dia anterior',
+    hint:'Como foi o sono e o fim do dia de ontem?',
+    checks:['Dormi cedo','Dormi tarde','Dormi relaxado','Mente acelerada','Compulsivo','Preocupado','Muito tempo no celular','Pensando no futuro','Dormi bem','Sono interrompido','Acordei várias vezes','Dormi menos de 6h','Dormi mais de 8h']
   },
   alimentacao: {
     eyebrow:'Corpo', title:'Alimentação',
@@ -366,7 +371,7 @@ const SECTIONS = {
   trabalho: {
     eyebrow:'Dia', title:'Trabalho',
     hint:'Sem cobrança de produtividade — só observação.',
-    checks:['Estava presente','Entrei no túnel','Usei o Anti-Túnel','Trabalhei além do necessário','Liguei o computador apenas por compulsão']
+    checks:['Não trabalhei','Estava presente','Entrei no túnel','Usei o Anti-Túnel','Trabalhei além do necessário','Liguei o computador apenas por compulsão']
   },
   estudos: {
     eyebrow:'Dia', title:'Estudos',
@@ -387,6 +392,7 @@ function blankEntry(date){
     date: date || todayISO(),
     estadoMental:{checks:[],comentario:''},
     acordar:{checks:[],comentario:''},
+    sono:{checks:[],comentario:''},
     corpo:{atividade:null,durante:[],seNao:[],comentario:''},
     trading:{antes:[],durante:[],depois:'',resultado:null,pontos:''},
     alimentacao:{checks:[],comentario:''},
@@ -406,7 +412,7 @@ function normalizeEntry(e){
   out.date = e.date || out.date;
   out.savedAt = e.savedAt || null;
   out.escala = (typeof e.escala==='number') ? e.escala : out.escala;
-  ['estadoMental','acordar','alimentacao','trabalho','estudos'].forEach(k=>{
+  ['estadoMental','acordar','sono','alimentacao','trabalho','estudos'].forEach(k=>{
     if(e[k]){ out[k].checks = Array.isArray(e[k].checks)?e[k].checks:[]; out[k].comentario = e[k].comentario||''; }
   });
   if(e.corpo){
@@ -585,6 +591,7 @@ function checklistScreen(key){
 
 SCREENS.push(checklistScreen('estadoMental'));
 SCREENS.push(checklistScreen('acordar'));
+SCREENS.push(checklistScreen('sono'));
 
 /* Tela — Corpo e Movimento (condicional) */
 SCREENS.push({
@@ -732,6 +739,7 @@ SCREENS.push({
     const rows = [
       ['Estado mental', summarize(entry.estadoMental.checks, entry.estadoMental.comentario), 'estadoMental'],
       ['Como acordei', summarize(entry.acordar.checks, entry.acordar.comentario), 'acordar'],
+      ['Noite anterior', summarize(entry.sono.checks, entry.sono.comentario), 'sono'],
       ['Corpo', corpoSummary(), 'corpo'],
       ['Trading', tradingSummary(), 'trading'],
       ['Alimentação', summarize(entry.alimentacao.checks, entry.alimentacao.comentario), 'alimentacao'],
