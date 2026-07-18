@@ -20,6 +20,7 @@
     --flex-c:#4FB3A6; --flex-bg:#E4F3F0;
     --contr-c:#C7614E; --contr-bg:#F7E7E3;
     --neutro-c:#8A999D; --neutro-bg:#EEF1F1;
+    --recup-c:#B5842F; --recup-bg:#F4EBD9;
     --radius:16px; --radius-sm:11px; --pad:20px;
     --serif:'Spectral',Georgia,serif;
     --sans:'Hanken Grotesk',-apple-system,system-ui,sans-serif;
@@ -46,17 +47,52 @@
 
   /* Summary card */
   .summary{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
-  .summary-row{display:flex;gap:10px;margin-bottom:12px;}
-  .summary-stat{flex:1;text-align:center;}
-  .summary-emoji{font-size:15px;}
-  .summary-num{font-family:var(--serif);font-weight:600;font-size:19px;display:block;margin:3px 0 1px;}
-  .summary-cap{font-size:11.5px;color:var(--ink-soft);}
+  .summary-row{display:flex;gap:6px;margin-bottom:12px;}
+  .summary-stat{flex:1;text-align:center;min-width:0;}
+  .summary-emoji{font-size:14px;}
+  .summary-num{font-family:var(--serif);font-weight:600;font-size:16.5px;display:block;margin:3px 0 1px;}
+  .summary-cap{font-size:10.5px;color:var(--ink-soft);line-height:1.2;}
   .stackbar{height:10px;border-radius:6px;overflow:hidden;display:flex;background:var(--line);}
   .stackbar > div{height:100%;}
   .summary-note{font-size:12px;color:var(--ink-faint);margin-top:10px;text-align:center;font-style:italic;font-family:var(--serif);}
 
   /* Quick add card */
   .addcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
+
+  /* Botões grandes de retorno */
+  .bigbtn-row{display:flex;gap:10px;margin-bottom:18px;}
+  .bigbtn{flex:1;font-family:var(--sans);font-size:14.5px;font-weight:700;border-radius:var(--radius-sm);
+    padding:14px 10px;cursor:pointer;border:2px solid transparent;display:flex;flex-direction:column;
+    align-items:center;gap:2px;transition:transform .12s ease;}
+  .bigbtn:active{transform:scale(.97);}
+  .bigbtn-voltei{background:var(--flex-c);color:#fff;}
+  .bigbtn-ainda{background:var(--surface);color:var(--contr-c);border-color:var(--contr-c);}
+  .bigbtn small{font-weight:500;font-size:11px;opacity:.85;}
+  .context-hint{font-size:12px;color:var(--ink-faint);line-height:1.5;margin:0 0 18px;font-style:italic;font-family:var(--serif);}
+
+  /* Prompt "o que ajudou" pós-Voltei */
+  .ajudou-prompt{display:none;background:var(--flex-bg);border:1.5px solid var(--flex-c);border-radius:var(--radius-sm);
+    padding:14px;margin-bottom:18px;}
+  .ajudou-prompt.show{display:block;}
+  .ajudou-prompt .subgroup-label{margin:0 0 8px;color:var(--accent-deep);}
+  .ajudou-prompt textarea{width:100%;font-family:var(--sans);font-size:14.5px;color:var(--ink);
+    background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius-sm);
+    padding:10px 12px;resize:none;min-height:52px;}
+  .ajudou-prompt textarea:focus{outline:none;border-color:var(--accent);}
+  .ajudou-row{display:flex;gap:8px;margin-top:10px;}
+  .ajudou-row .btn{flex:1;padding:10px;font-size:14px;}
+
+  /* Campos de contexto opcionais */
+  .context-toggle{background:none;border:none;color:var(--accent-deep);font-family:var(--sans);
+    font-size:13px;font-weight:600;cursor:pointer;padding:4px 0;margin-top:14px;}
+  .context-fields{display:none;margin-top:10px;}
+  .context-fields.show{display:block;}
+  .context-field{margin-bottom:12px;}
+  .context-field label{font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;display:block;}
+  .context-field textarea{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);
+    background:var(--surface-2);border:1.5px solid var(--line);border-radius:var(--radius-sm);
+    padding:10px 12px;resize:none;min-height:50px;}
+  .context-field textarea:focus{outline:none;border-color:var(--accent);}
   .subgroup-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin:0 0 10px;}
   .subgroup-label:not(:first-child){margin-top:18px;}
 
@@ -69,10 +105,16 @@
   .chip.cat-abertura .cdot{background:var(--flex-c);}
   .chip.cat-contracao .cdot{background:var(--contr-c);}
   .chip.cat-neutro .cdot{background:var(--neutro-c);}
+  .chip.cat-recuperacao .cdot{background:var(--recup-c);}
   .chip[aria-pressed="true"].cat-abertura{background:var(--flex-bg);border-color:var(--flex-c);color:var(--accent-deep);}
   .chip[aria-pressed="true"].cat-contracao{background:var(--contr-bg);border-color:var(--contr-c);color:#8A3626;}
   .chip[aria-pressed="true"].cat-neutro{background:var(--neutro-bg);border-color:var(--neutro-c);color:var(--ink-soft);}
-  .chip.chip-custom{border-style:dashed;}
+  .chip[aria-pressed="true"].cat-recuperacao{background:var(--recup-bg);border-color:var(--recup-c);color:#7A5A1F;}
+  .chip.chip-custom{border-style:dashed;cursor:default;}
+  .chip.chip-custom-pending{background:var(--accent-wash);border-color:var(--accent);color:var(--accent-deep);border-style:dashed;}
+  .chip[aria-pressed="true"]{border-width:2px;}
+  .chip-remove{background:none;border:none;color:inherit;opacity:.55;font-size:16px;margin-left:2px;cursor:pointer;padding:0 2px;line-height:1;}
+  .chip-remove:active{opacity:1;}
 
   .custom-row{display:flex;gap:8px;margin-top:10px;}
   .custom-row input[type=text]{flex:1;font-family:var(--sans);font-size:14.5px;color:var(--ink);
@@ -116,11 +158,19 @@
   /* Timeline list */
   .listcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);padding:6px 18px 14px;margin-bottom:16px;}
   .listcard h2{font-family:var(--serif);font-weight:500;font-size:16px;margin:14px 0 8px;}
+
+  .seq-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .seq-item{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:500;color:var(--ink);
+    background:var(--surface-2);border-radius:100px;padding:4px 9px;}
+  .seq-item .sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .seq-item.cat-abertura .sdot{background:var(--flex-c);} .seq-item.cat-contracao .sdot{background:var(--contr-c);}
+  .seq-item.cat-neutro .sdot{background:var(--neutro-c);} .seq-item.cat-recuperacao .sdot{background:var(--recup-c);}
+  .seq-arrow{color:var(--ink-faint);font-size:12px;}
   .empty-state{color:var(--ink-faint);font-size:13.5px;font-style:italic;font-family:var(--serif);padding:14px 0 18px;text-align:center;}
   .entry-row{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
   .entry-row:last-child{border-bottom:none;}
   .entry-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-  .entry-dot.cat-abertura{background:var(--flex-c);} .entry-dot.cat-contracao{background:var(--contr-c);} .entry-dot.cat-neutro{background:var(--neutro-c);}
+  .entry-dot.cat-abertura{background:var(--flex-c);} .entry-dot.cat-contracao{background:var(--contr-c);} .entry-dot.cat-neutro{background:var(--neutro-c);} .entry-dot.cat-recuperacao{background:var(--recup-c);}
   .entry-main{flex:1;min-width:0;}
   .entry-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
   .entry-time{font-family:var(--serif);font-weight:600;font-size:14.5px;color:var(--ink);}
@@ -172,12 +222,32 @@
         <span class="summary-num" id="sumNeutro">0min</span>
         <div class="summary-cap">neutro</div>
       </div>
+      <div class="summary-stat">
+        <div class="summary-emoji">🟡</div>
+        <span class="summary-num" id="sumRecup">0min</span>
+        <div class="summary-cap">recuperação</div>
+      </div>
     </div>
     <div class="stackbar" id="stackbar"></div>
     <div class="summary-note" id="summaryNote"></div>
   </div>
 
   <div class="addcard">
+    <div class="bigbtn-row">
+      <button class="bigbtn bigbtn-voltei" id="volteiBigBtn" type="button">↩ Voltei<small>registra agora</small></button>
+      <button class="bigbtn bigbtn-ainda" id="aindaBigBtn" type="button">Ainda estou aqui<small>percebi, mas não voltei</small></button>
+    </div>
+    <p class="context-hint">Se um estado virar outro no meio do caminho (ex: Pressa → Raiva), só registre o novo — não precisa apertar Voltei entre eles. Um único Voltei fecha a cadeia inteira, cada elo com o tempo certo.</p>
+
+    <div class="ajudou-prompt" id="ajudouPrompt">
+      <div class="subgroup-label">O que ajudou?</div>
+      <textarea id="ajudouInput" placeholder="ex: caminhei, respirei, tomei água… (opcional)"></textarea>
+      <div class="ajudou-row">
+        <button class="btn btn-ghost" id="ajudouSkip" type="button">Pular</button>
+        <button class="btn btn-primary" id="ajudouSave" type="button">Salvar</button>
+      </div>
+    </div>
+
     <div class="subgroup-label">O que sinto agora?</div>
     <div class="chips" id="stateChips"></div>
 
@@ -201,6 +271,18 @@
       <div class="intensity-legend"><span>0–3 leve</span><span>4–6 moderado</span><span>7–10 intenso</span></div>
     </div>
 
+    <button class="context-toggle" id="contextToggle" type="button">+ O que aconteceu / o que contei pra mim</button>
+    <div class="context-fields" id="contextFields">
+      <div class="context-field">
+        <label for="contextoInput">O que aconteceu?</label>
+        <textarea id="contextoInput" placeholder="O fato, sem interpretação…"></textarea>
+      </div>
+      <div class="context-field">
+        <label for="narrativaInput">O que contei pra mim?</label>
+        <textarea id="narrativaInput" placeholder="A história que veio junto…"></textarea>
+      </div>
+    </div>
+
     <div class="time-row">
       <div class="time-field">
         <div class="subgroup-label" style="margin-top:0">Horário</div>
@@ -216,10 +298,11 @@
 
   <div class="listcard">
     <h2 id="listTitle">Hoje</h2>
+    <div class="seq-row" id="seqRow"></div>
     <div id="entryList"></div>
   </div>
 
-  <p class="hint">Dica: registre um estado antes de dormir para fechar o dia certinho.</p>
+  <p class="hint">Não registre para se vigiar. Registre para se conhecer.</p>
 
   <button class="btn btn-outline" id="exportBtn" type="button">Exportar tudo</button>
 
@@ -243,16 +326,20 @@ const STATES = [
   'Limpo','Flexível','Presente','Corpo leve','Voltei',
   'Neutro',
   'Corpo contraído','Túnel','Cobrança','No futuro','Compulsão','Ansioso','Pressa','Medo',
-  'Necessidade de provar algo','Cansado mentalmente','Cansado fisicamente','Torpor','Preguiça'
+  'Necessidade de provar algo','Cansado mentalmente','Cansado fisicamente','Torpor','Preguiça',
+  'Caminhei','Respirei','Conversei','Exercício','Parei','Água'
 ];
 const CATEGORY = {
   'Limpo':'abertura','Flexível':'abertura','Presente':'abertura','Corpo leve':'abertura','Voltei':'abertura',
   'Neutro':'neutro',
   'Corpo contraído':'contracao','Túnel':'contracao','Cobrança':'contracao','No futuro':'contracao','Compulsão':'contracao',
   'Ansioso':'contracao','Pressa':'contracao','Medo':'contracao','Necessidade de provar algo':'contracao',
-  'Cansado mentalmente':'contracao','Cansado fisicamente':'contracao','Torpor':'contracao','Preguiça':'contracao'
+  'Cansado mentalmente':'contracao','Cansado fisicamente':'contracao','Torpor':'contracao','Preguiça':'contracao',
+  'Ainda estou aqui':'contracao',
+  'Caminhei':'recuperacao','Respirei':'recuperacao','Conversei':'recuperacao','Exercício':'recuperacao',
+  'Parei':'recuperacao','Água':'recuperacao'
 };
-const NO_INTENSITY = new Set(['Voltei']);
+const NO_INTENSITY = new Set(['Voltei','Ainda estou aqui']);
 
 /* ---------- data/hora ---------- */
 function todayISO(){ const d=new Date(); const off=d.getTimezoneOffset(); return new Date(d.getTime()-off*60000).toISOString().slice(0,10); }
@@ -296,7 +383,7 @@ function computeDay(dateISO){
   const list = allEntries[dateISO] || [];
   const sorted = [...list].sort((a,b)=>toMin(a.time)-toMin(b.time));
   const nowMin = (dateISO===todayISO()) ? toMin(nowHHMM()) : null;
-  const totals = {abertura:0, contracao:0, neutro:0};
+  const totals = {abertura:0, contracao:0, neutro:0, recuperacao:0};
   const episodes = [];
   for(let i=0;i<sorted.length;i++){
     const start = toMin(sorted[i].time);
@@ -328,6 +415,17 @@ const intensityBlock=document.getElementById('intensityBlock');
 const intRange=document.getElementById('intRange');
 const intWord=document.getElementById('intWord');
 const intNum=document.getElementById('intNum');
+const contextToggle=document.getElementById('contextToggle');
+const contextFields=document.getElementById('contextFields');
+const contextoInput=document.getElementById('contextoInput');
+const narrativaInput=document.getElementById('narrativaInput');
+const volteiBigBtn=document.getElementById('volteiBigBtn');
+const aindaBigBtn=document.getElementById('aindaBigBtn');
+const ajudouPrompt=document.getElementById('ajudouPrompt');
+const ajudouInput=document.getElementById('ajudouInput');
+const ajudouSave=document.getElementById('ajudouSave');
+const ajudouSkip=document.getElementById('ajudouSkip');
+const seqRow=document.getElementById('seqRow');
 const timeInput=document.getElementById('timeInput');
 const saveBtn=document.getElementById('saveBtn');
 const nowBtn=document.getElementById('nowBtn');
@@ -341,6 +439,7 @@ const nextDay=document.getElementById('nextDay');
 const sumFlex=document.getElementById('sumFlex');
 const sumContr=document.getElementById('sumContr');
 const sumNeutro=document.getElementById('sumNeutro');
+const sumRecup=document.getElementById('sumRecup');
 const stackbar=document.getElementById('stackbar');
 const summaryNote=document.getElementById('summaryNote');
 
@@ -366,13 +465,20 @@ function updateFormState(){
 function renderChips(){
   stateChipsEl.innerHTML='';
   if(isCustom && selectedState){
-    const c=el('button','chip chip-custom cat-'+(selectedCategory||'neutro'));
-    c.type='button'; c.setAttribute('aria-pressed','true');
-    c.innerHTML=`<span class="cdot"></span>${selectedState}`;
-    c.addEventListener('click',()=>{
+    const catClass = selectedCategory ? ('cat-'+selectedCategory) : 'chip-custom-pending';
+    const c=el('div','chip chip-custom '+catClass);
+    c.setAttribute('aria-pressed','true');
+    const label=el('span',null, selectedCategory ? `<span class="cdot"></span>${selectedState}` : selectedState);
+    label.style.cssText='display:inline-flex;align-items:center;gap:6px;';
+    c.appendChild(label);
+    const rm=el('button','chip-remove','×'); rm.type='button';
+    rm.setAttribute('aria-label','Remover');
+    rm.addEventListener('click',(ev)=>{
+      ev.stopPropagation();
       selectedState=null; isCustom=false; selectedCategory=null;
-      renderChips(); updateFormState();
+      renderChips(); renderCatChips(); updateFormState();
     });
+    c.appendChild(rm);
     stateChipsEl.appendChild(c);
   }
   STATES.forEach(st=>{
@@ -432,6 +538,53 @@ intRange.addEventListener('input',()=>{
 
 nowBtn.addEventListener('click',()=>{ timeInput.value = nowHHMM(); });
 
+contextToggle.addEventListener('click',()=>{
+  const showing = contextFields.classList.toggle('show');
+  contextToggle.textContent = showing ? '– Ocultar contexto' : '+ O que aconteceu / o que contei pra mim';
+});
+
+/* Cria e persiste uma entrada; se for 'Voltei', abre o prompt "o que ajudou". */
+function commitEntry(partial){
+  const entry = Object.assign({ id: 'e_'+Date.now()+'_'+Math.random().toString(36).slice(2,6) }, partial);
+  const list = allEntries[selectedDate] || (allEntries[selectedDate]=[]);
+  list.push(entry);
+  saveAll(allEntries);
+  renderAll();
+  if(entry.state === 'Voltei'){ openAjudouPrompt(entry.id); }
+  return entry;
+}
+
+function openAjudouPrompt(entryId){
+  pendingAjudouId = entryId;
+  ajudouInput.value='';
+  ajudouPrompt.classList.add('show');
+  ajudouInput.focus();
+}
+function closeAjudouPrompt(){
+  pendingAjudouId = null;
+  ajudouPrompt.classList.remove('show');
+}
+let pendingAjudouId = null;
+ajudouSave.addEventListener('click',()=>{
+  const txt = ajudouInput.value.trim();
+  if(txt && pendingAjudouId){
+    const list = allEntries[selectedDate]||[];
+    const e = list.find(x=>x.id===pendingAjudouId);
+    if(e){ e.ajudou = txt; saveAll(allEntries); renderList(); }
+  }
+  closeAjudouPrompt();
+  toast('Registrado');
+});
+ajudouSkip.addEventListener('click',()=>{ closeAjudouPrompt(); toast('Registrado'); });
+
+volteiBigBtn.addEventListener('click',()=>{
+  commitEntry({ time: nowHHMM(), state:'Voltei', intensity:null, cat:'abertura' });
+});
+aindaBigBtn.addEventListener('click',()=>{
+  commitEntry({ time: nowHHMM(), state:'Ainda estou aqui', intensity:null, cat:'contracao' });
+  toast('Registrado — perceber já é parte do caminho');
+});
+
 saveBtn.addEventListener('click',()=>{
   if(!selectedState) return;
   if(isCustom && !selectedCategory) return;
@@ -439,15 +592,22 @@ saveBtn.addEventListener('click',()=>{
   const skipsIntensity = !isCustom && NO_INTENSITY.has(selectedState);
   const intensity = skipsIntensity ? null : parseInt(intRange.value,10);
   const cat = isCustom ? selectedCategory : (CATEGORY[selectedState] || 'neutro');
-  const list = allEntries[selectedDate] || (allEntries[selectedDate]=[]);
-  list.push({ id: 'e_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), time, state: selectedState, intensity, cat });
-  saveAll(allEntries);
+  const contexto = contextoInput.value.trim();
+  const narrativa = narrativaInput.value.trim();
+  const partial = { time, state: selectedState, intensity, cat };
+  if(contexto) partial.contexto = contexto;
+  if(narrativa) partial.narrativa = narrativa;
+  const wasVoltei = (selectedState === 'Voltei');
+  commitEntry(partial);
+
   selectedState=null; isCustom=false; selectedCategory=null;
   renderChips(); renderCatChips();
+  contextoInput.value=''; narrativaInput.value='';
+  contextFields.classList.remove('show');
+  contextToggle.textContent='+ O que aconteceu / o que contei pra mim';
   updateFormState();
   timeInput.value = nowHHMM();
-  toast('Registrado');
-  renderAll();
+  if(!wasVoltei) toast('Registrado');
 });
 
 function deleteEntry(dateISO, id){
@@ -462,11 +622,12 @@ function renderSummary(){
   sumFlex.textContent = fmtDur(totals.abertura) || '0min';
   sumContr.textContent = fmtDur(totals.contracao) || '0min';
   sumNeutro.textContent = fmtDur(totals.neutro) || '0min';
+  sumRecup.textContent = fmtDur(totals.recuperacao) || '0min';
 
-  const total = totals.abertura+totals.contracao+totals.neutro;
+  const total = totals.abertura+totals.contracao+totals.neutro+totals.recuperacao;
   stackbar.innerHTML='';
   if(total>0){
-    const segs=[['abertura','var(--flex-c)'],['contracao','var(--contr-c)'],['neutro','var(--neutro-c)']];
+    const segs=[['abertura','var(--flex-c)'],['recuperacao','var(--recup-c)'],['contracao','var(--contr-c)'],['neutro','var(--neutro-c)']];
     segs.forEach(([k,color])=>{
       if(totals[k]>0){
         const d=el('div'); d.style.width=(totals[k]/total*100)+'%'; d.style.background=color;
@@ -484,6 +645,20 @@ function renderSummary(){
   } else {
     summaryNote.textContent='';
   }
+}
+
+/* ---------- render: sequência do dia ---------- */
+function renderSequence(){
+  const {episodes} = computeDay(selectedDate);
+  seqRow.innerHTML='';
+  if(episodes.length < 2){ seqRow.style.display='none'; return; }
+  seqRow.style.display='flex';
+  episodes.forEach((e,i)=>{
+    if(i>0) seqRow.appendChild(el('span','seq-arrow','→'));
+    const item=el('span','seq-item cat-'+e.cat);
+    item.innerHTML=`<span class="sdot"></span>${e.state}`;
+    seqRow.appendChild(item);
+  });
 }
 
 /* ---------- render: lista ---------- */
@@ -504,11 +679,17 @@ function renderList(){
     top.appendChild(left);
     top.appendChild(el('div','entry-int', e.intensity!=null ? `${e.intensity} · ${intensityWord(e.intensity)}` : '—'));
     main.appendChild(top);
-    const durTxt = e.dur!=null ? fmtDur(e.dur) : (selectedDate===todayISO() ? 'em andamento' : 'sem duração');
-    main.appendChild(el('div','entry-dur','→ '+durTxt));
+    let durLine;
+    if(e.dur!=null) durLine = 'Durou '+fmtDur(e.dur)+' nesse estado';
+    else if(selectedDate===todayISO()) durLine = 'Em andamento nesse estado';
+    else durLine = 'Sem duração registrada';
+    main.appendChild(el('div','entry-dur',durLine));
     if(e.tempoAteVoltar!=null){
-      main.appendChild(el('div','entry-voltou','voltou em '+fmtDur(e.tempoAteVoltar)));
+      main.appendChild(el('div','entry-voltou','Até voltar de vez (contando o que veio depois): '+fmtDur(e.tempoAteVoltar)));
     }
+    if(e.contexto){ main.appendChild(el('div','entry-dur','O que aconteceu: '+e.contexto)); }
+    if(e.narrativa){ main.appendChild(el('div','entry-dur','O que contei: '+e.narrativa)); }
+    if(e.ajudou){ main.appendChild(el('div','entry-voltou','O que ajudou: '+e.ajudou)); }
     row.appendChild(main);
     const del=el('button','entry-del','×'); del.type='button';
     del.addEventListener('click',()=>deleteEntry(selectedDate, e.id));
@@ -548,7 +729,7 @@ async function exportAll(){
   const dates = Object.keys(allEntries).filter(d=>(allEntries[d]||[]).length).sort();
   if(!dates.length){ toast('Nenhum registro ainda'); return; }
   const entradas = dates.map(d=>({date:d, registros:[...allEntries[d]].sort((a,b)=>toMin(a.time)-toMin(b.time))}));
-  const payload = { app:'Linha do Tempo dos Estados', versao:1, exportadoEm:new Date().toISOString(), total:dates.length, entradas };
+  const payload = { app:'Linha do Tempo dos Estados', versao:2, exportadoEm:new Date().toISOString(), total:dates.length, entradas };
   const json = JSON.stringify(payload,null,2);
   const fname = `linha_tempo_${todayISO()}.json`;
   const blob = new Blob([json],{type:'application/json'});
@@ -567,6 +748,7 @@ document.getElementById('exportBtn').addEventListener('click', exportAll);
 function renderAll(){
   renderDate();
   renderSummary();
+  renderSequence();
   renderList();
 }
 timeInput.value = nowHHMM();
