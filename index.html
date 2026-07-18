@@ -398,7 +398,7 @@ function blankEntry(date){
     alimentacao:{checks:[],comentario:''},
     trabalho:{checks:[],comentario:''},
     estudos:{checks:[],comentario:''},
-    fechamento:{contracao:'',voltar:'',integrado:''},
+    fechamento:{contracao:'',voltar:'',tempoVoltar:null,integrado:'',percebeuAntes:null},
     escala:5,
     savedAt:null
   };
@@ -431,7 +431,9 @@ function normalizeEntry(e){
   if(e.fechamento){
     out.fechamento.contracao = e.fechamento.contracao||'';
     out.fechamento.voltar = e.fechamento.voltar||'';
+    out.fechamento.tempoVoltar = e.fechamento.tempoVoltar||null;
     out.fechamento.integrado = e.fechamento.integrado||'';
+    out.fechamento.percebeuAntes = e.fechamento.percebeuAntes||null;
   }
   return out;
 }
@@ -571,6 +573,10 @@ SCREENS.push({
     start.style.marginTop='30px';
     start.addEventListener('click',()=>goTo(1));
     nav.appendChild(start);
+    const linhaLink = el('a',null,'Ver Linha do Tempo dos Estados →');
+    linhaLink.href='linha-tempo.html';
+    linhaLink.style.cssText='display:block;text-align:center;margin-top:16px;font-size:13.5px;color:var(--ink-soft);text-decoration:none;font-weight:500;';
+    nav.appendChild(linhaLink);
     s.appendChild(nav);
   }
 });
@@ -648,7 +654,7 @@ SCREENS.push({
 
     s.appendChild(el('div','subgroup-label','Durante'));
     s.appendChild(chipGroup(
-      ['Respeitei o plano','Pensei em PM','Negociei comigo mesmo','Desliguei quando terminou','Liguei novamente por compulsão'],
+      ['Respeitei o plano','Pensei em PM','Fiz PM','Negociei comigo mesmo','Desliguei quando terminou','Liguei novamente por compulsão'],
       entry.trading.durante));
 
     s.appendChild(el('div','subgroup-label','Resultado do dia'));
@@ -692,7 +698,15 @@ SCREENS.push({
     hint2.style.margin='7px 0 0';
     q2.appendChild(hint2);
     s.appendChild(q2);
+
+    s.appendChild(el('div','subgroup-label','Quanto tempo levei para voltar?'));
+    s.appendChild(singleSelect(['Menos de 1 minuto','1–5 minutos','5–30 minutos','Mais de 30 minutos','Não consegui voltar'], entry.fechamento, 'tempoVoltar'));
+
     s.appendChild(q3);
+
+    s.appendChild(el('div','subgroup-label','Antes de encerrar'));
+    s.appendChild(el('p','section-hint','Hoje consegui perceber minha contração antes que ela assumisse o controle?'));
+    s.appendChild(singleSelect(['Sim','Parcialmente','Não'], entry.fechamento, 'percebeuAntes'));
   }
 });
 
@@ -747,7 +761,9 @@ SCREENS.push({
       ['Estudos', summarize(entry.estudos.checks, entry.estudos.comentario), 'estudos'],
       ['Contração', entry.fechamento.contracao, 'fechamento'],
       ['Voltar', entry.fechamento.voltar, 'fechamento'],
+      ['Tempo p/ voltar', entry.fechamento.tempoVoltar, 'fechamento'],
       ['Integração', entry.fechamento.integrado, 'fechamento'],
+      ['Percebi antes?', entry.fechamento.percebeuAntes, 'fechamento'],
       ['Flexibilidade', `<span class="review-scale-badge">${entry.escala} / 10</span> · ${scaleWord(entry.escala)}`, 'escala']
     ];
     rows.forEach(([key,val,sid])=>{
