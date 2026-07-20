@@ -314,6 +314,7 @@
    ========================================================= */
 
 const STORE_KEY = 'linhatempo_threads';
+const STORE_CUSTOM_KEY = 'linhatempo_custom_states';
 
 const STATES = [
   'Limpo','Flexível','Presente','Corpo leve',
@@ -366,10 +367,20 @@ function fmtWhen(dateISO, hhmm){
 /* ---------- persistência ---------- */
 function loadThreads(){ try{const r=localStorage.getItem(STORE_KEY);return r?JSON.parse(r):[];}catch(e){return [];} }
 function saveThreads(){ try{localStorage.setItem(STORE_KEY,JSON.stringify(allThreads));}catch(e){} }
+function loadCustomStates(){ try{const r=localStorage.getItem(STORE_CUSTOM_KEY);return r?JSON.parse(r):[];}catch(e){return [];} }
+function saveCustomStates(){ try{localStorage.setItem(STORE_CUSTOM_KEY,JSON.stringify(customStates));}catch(e){} }
+/* Categoria de um estado pelo nome: primeiro nos fixos, depois nos personalizados salvos. */
+function stateCat(name){
+  if(CATEGORY[name]) return CATEGORY[name];
+  const c = customStates.find(x=>x.state===name);
+  return c ? c.cat : null;
+}
 
 let allThreads = loadThreads();
+let customStates = loadCustomStates();
 let selectedDate = todayISO();
 let selectedState = null, isCustom=false, selectedCategory=null;
+let pendingDeleteCustom = null;
 let openFormParentId = null;
 let activeCheckThreadId = null, activeCheckChoice = null; // accordion de fechar/checkin
 
@@ -480,6 +491,48 @@ function renderChips(){
     });
     stateChipsEl.appendChild(c);
   });
+
+  if(customStates.length){
+    const divider=el('div',null,'');
+    divider.style.cssText='width:100%;height:0;flex-basis:100%;';
+    stateChipsEl.appendChild(divider);
+  }
+  customStates.forEach(cs=>{
+    const inDeleteMode = pendingDeleteCustom===cs.state;
+    const c=el('button','chip chip-custom cat-'+cs.cat); c.type='button';
+    if(inDeleteMode){
+      c.setAttribute('aria-pressed','true');
+      c.innerHTML=`<span class="cdot"></span>${cs.state}`;
+      const rm=el('button','chip-remove','×'); rm.type='button';
+      rm.addEventListener('click',(ev)=>{
+        ev.stopPropagation();
+        customStates = customStates.filter(x=>x.state!==cs.state);
+        saveCustomStates();
+        if(selectedState===cs.state){ selectedState=null; isCustom=false; selectedCategory=null; }
+        pendingDeleteCustom=null;
+        renderChips(); updateFormState();
+      });
+      c.appendChild(rm);
+    } else {
+      c.setAttribute('aria-pressed', (!isCustom && selectedState===cs.state)?'true':'false');
+      c.innerHTML=`<span class="cdot"></span>${cs.state}`;
+    }
+    let pressTimer=null, longPressed=false;
+    const startPress=()=>{ longPressed=false; pressTimer=setTimeout(()=>{ longPressed=true; pendingDeleteCustom=cs.state; renderChips(); },500); };
+    const cancelPress=()=>{ if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; } };
+    c.addEventListener('pointerdown', startPress);
+    c.addEventListener('pointerup', cancelPress);
+    c.addEventListener('pointerleave', cancelPress);
+    c.addEventListener('pointercancel', cancelPress);
+    c.addEventListener('click',()=>{
+      if(longPressed){ longPressed=false; return; } // o toque que originou o long-press não deve também selecionar
+      if(inDeleteMode){ pendingDeleteCustom=null; renderChips(); return; } // toca fora do × cancela o modo apagar
+      if(!isCustom && selectedState===cs.state){ selectedState=null; }
+      else { selectedState=cs.state; isCustom=false; selectedCategory=null; }
+      renderChips(); updateFormState();
+    });
+    stateChipsEl.appendChild(c);
+  });
 }
 function renderCatChips(){
   catChipsEl.innerHTML='';
@@ -536,7 +589,7 @@ saveBtn.addEventListener('click',()=>{
   if(isCustom && !selectedCategory) return;
   const time = timeInput.value || nowHHMM();
   const intensity = parseInt(intRange.value,10);
-  const cat = isCustom ? selectedCategory : (CATEGORY[selectedState]||'neutro');
+  const cat = isCustom ? selectedCategory : (stateCat(selectedState) || 'neutro');
   const contexto = contextoInput.value.trim();
   const narrativa = narrativaInput.value.trim();
   const thread = {
@@ -549,6 +602,12 @@ saveBtn.addEventListener('click',()=>{
   };
   allThreads.push(thread);
   saveThreads();
+
+  // um estado digitado na hora vira permanente, pra aparecer como chip normal depois
+  if(isCustom && !customStates.find(c=>c.state===selectedState)){
+    customStates.push({state:selectedState, cat:selectedCategory});
+    saveCustomStates();
+  }
 
   selectedState=null; isCustom=false; selectedCategory=null;
   renderChips(); renderCatChips();
