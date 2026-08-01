@@ -205,6 +205,22 @@
     display:none;
   }
   .loaded-note.show{display:block;}
+  .stale-banner{
+    display:none;background:var(--surface-2);border:1.5px solid var(--gold);border-radius:var(--radius-sm);
+    padding:13px 14px;margin-top:16px;
+  }
+  .stale-banner.show{display:block;}
+  .stale-banner p{font-size:13.5px;color:var(--ink);margin:0 0 10px;line-height:1.5;}
+  .stale-banner .row{display:flex;gap:10px;}
+  .stale-banner .row button{flex:1;padding:11px;font-size:13.5px;}
+  .confirm-panel{
+    display:none;background:var(--surface-2);border:1.5px solid var(--line-strong);border-radius:var(--radius-sm);
+    padding:14px;margin-top:14px;
+  }
+  .confirm-panel.show{display:block;}
+  .confirm-panel p{font-size:13.5px;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .confirm-panel .row{display:flex;gap:10px;}
+  .confirm-panel .row button{flex:1;padding:12px;font-size:14px;margin-top:0;}
 
   /* ---------- Scale screen ---------- */
   .scale-screen{justify-content:flex-start;}
@@ -440,6 +456,20 @@ function normalizeEntry(e){
 
 let entry = normalizeEntry(loadDraft());
 let current = 0;
+let staleDraftPending = false; // true quando há rascunho de outro dia AINDA NÃO salvo
+
+// Se o rascunho carregado é de um dia diferente de hoje:
+//  - se já foi salvo (savedAt definido), é seguro começar hoje em branco automaticamente,
+//    porque os dados antigos já estão preservados em allEntries.
+//  - se NÃO foi salvo, não descarta nada sozinho — só marca pra avisar na tela de abertura.
+if(entry.date !== todayISO()){
+  if(entry.savedAt){
+    entry = blankEntry(todayISO());
+    saveDraft();
+  } else {
+    staleDraftPending = true;
+  }
+}
 
 /* ---------- Persistência ---------- */
 function loadDraft(){
@@ -564,6 +594,27 @@ SCREENS.push({
     dateBlock.appendChild(di);
     dateBlock.appendChild(loaded);
     top.appendChild(dateBlock);
+
+    if(staleDraftPending){
+      const stale = el('div','stale-banner show');
+      const p = el('p', null,
+        `Isso ainda é de <b>${formatDateLong(entry.date)}</b> e não foi salvo. Continue de onde parou, ou comece hoje do zero.`);
+      stale.appendChild(p);
+      const row = el('div','row');
+      const keepBtn = el('button','btn btn-ghost','Continuar esse dia'); keepBtn.type='button';
+      keepBtn.addEventListener('click',()=>{ staleDraftPending=false; rebuildAll(); });
+      const freshBtn = el('button','btn btn-primary','Começar hoje'); freshBtn.type='button';
+      freshBtn.style.marginTop='0';
+      freshBtn.addEventListener('click',()=>{
+        entry = blankEntry(todayISO());
+        saveDraft();
+        staleDraftPending = false;
+        rebuildAll();
+      });
+      row.appendChild(keepBtn); row.appendChild(freshBtn);
+      stale.appendChild(row);
+      top.appendChild(stale);
+    }
 
     s.appendChild(top);
 
@@ -798,13 +849,33 @@ SCREENS.push({
     const expBtn = el('button','btn btn-outline','Exportar tudo'); expBtn.type='button';
     expBtn.addEventListener('click', exportAll);
     const newBtn = el('button','btn btn-ghost','Novo dia'); newBtn.type='button';
-    newBtn.addEventListener('click',()=>{
+
+    const newDayConfirm = el('div','confirm-panel');
+    newDayConfirm.appendChild(el('p',null,'<b>As respostas desta página ainda não foram salvas.</b> Começar um dia novo agora vai descartar tudo que está escrito aqui. Quer salvar primeiro?'));
+    const confirmRow = el('div','row');
+    const cancelBtn = el('button','btn btn-ghost','Cancelar'); cancelBtn.type='button';
+    cancelBtn.addEventListener('click',()=>{ newDayConfirm.classList.remove('show'); });
+    const discardBtn = el('button','btn btn-primary','Descartar e começar hoje'); discardBtn.type='button';
+    discardBtn.addEventListener('click',()=>{
       entry = blankEntry(todayISO());
       saveDraft(); rebuildAll(); goTo(0);
+    });
+    confirmRow.appendChild(cancelBtn); confirmRow.appendChild(discardBtn);
+    newDayConfirm.appendChild(confirmRow);
+
+    newBtn.addEventListener('click',()=>{
+      if(!entry.savedAt){
+        newDayConfirm.classList.add('show');
+        newDayConfirm.scrollIntoView({behavior:'smooth', block:'center'});
+      } else {
+        entry = blankEntry(todayISO());
+        saveDraft(); rebuildAll(); goTo(0);
+      }
     });
     exportRow.appendChild(expBtn);
     exportRow.appendChild(newBtn);
     area.appendChild(exportRow);
+    area.appendChild(newDayConfirm);
     s.appendChild(area);
   }
 });
