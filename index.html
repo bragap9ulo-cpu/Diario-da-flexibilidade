@@ -222,6 +222,26 @@
   .confirm-panel .row{display:flex;gap:10px;}
   .confirm-panel .row button{flex:1;padding:12px;font-size:14px;margin-top:0;}
 
+  .clear-prompt{
+    display:none;background:var(--accent-wash);border:1.5px solid var(--accent);border-radius:var(--radius-sm);
+    padding:14px;margin-top:14px;text-align:center;
+  }
+  .clear-prompt.show{display:block;}
+  .clear-prompt p{font-size:13.5px;color:var(--accent-deep);margin:0 0 10px;font-weight:500;}
+  .clear-prompt .row{display:flex;gap:10px;}
+  .clear-prompt .row button{flex:1;padding:11px;font-size:13.5px;margin-top:0;}
+
+  .btn-danger-outline{background:var(--surface);color:#C7614E;border-color:#C7614E;width:100%;margin-top:14px;}
+  .clear-confirm{
+    display:none;background:#F7E7E3;border:1.5px solid #C7614E;border-radius:var(--radius-sm);
+    padding:14px;margin-top:10px;
+  }
+  .clear-confirm.show{display:block;}
+  .clear-confirm p{font-size:13px;color:#8A3626;margin:0 0 10px;line-height:1.5;}
+  .clear-confirm .row{display:flex;gap:10px;}
+  .clear-confirm .row button{flex:1;padding:11px;font-size:13.5px;margin-top:0;}
+  .btn-danger{background:#C7614E;color:#fff;}
+
   /* ---------- Scale screen ---------- */
   .scale-screen{justify-content:flex-start;}
   .ripple-stage{
@@ -847,7 +867,10 @@ SCREENS.push({
 
     const exportRow = el('div','export-row');
     const expBtn = el('button','btn btn-outline','Exportar tudo'); expBtn.type='button';
-    expBtn.addEventListener('click', exportAll);
+    expBtn.addEventListener('click', async ()=>{
+      const ok = await exportAll();
+      if(ok) clearPrompt.classList.add('show');
+    });
     const newBtn = el('button','btn btn-ghost','Novo dia'); newBtn.type='button';
 
     const newDayConfirm = el('div','confirm-panel');
@@ -876,6 +899,48 @@ SCREENS.push({
     exportRow.appendChild(newBtn);
     area.appendChild(exportRow);
     area.appendChild(newDayConfirm);
+
+    const clearPrompt = el('div','clear-prompt');
+    clearPrompt.innerHTML = "<p>Exportado. Quer limpar os registros salvos no celular agora?</p>";
+    const clearPromptRow = el('div','row');
+    const clearPromptNo = el('button','btn btn-ghost','Manter'); clearPromptNo.type='button';
+    clearPromptNo.addEventListener('click',()=>{ clearPrompt.classList.remove('show'); });
+    const clearPromptYes = el('button','btn btn-primary','Limpar agora'); clearPromptYes.type='button';
+    clearPromptRow.appendChild(clearPromptNo); clearPromptRow.appendChild(clearPromptYes);
+    clearPrompt.appendChild(clearPromptRow);
+    area.appendChild(clearPrompt);
+
+    const clearBtn = el('button','btn btn-danger-outline','Limpar tudo'); clearBtn.type='button';
+    const clearConfirm = el('div','clear-confirm');
+    clearConfirm.innerHTML = "<p><b>Isso apaga todos os dias salvos no celular, sem volta.</b><br>Só faça isso depois de ter exportado e guardado o arquivo em algum lugar seguro (Drive, WhatsApp pra você mesmo, etc).</p>";
+    const clearConfirmRow = el('div','row');
+    const clearConfirmCancel = el('button','btn btn-ghost','Cancelar'); clearConfirmCancel.type='button';
+    clearConfirmCancel.addEventListener('click',()=>{ clearConfirm.classList.remove('show'); });
+    const clearConfirmYes = el('button','btn btn-danger','Sim, apagar tudo'); clearConfirmYes.type='button';
+    clearConfirmYes.addEventListener('click',()=>{
+      saveEntries({});
+      entry = blankEntry(todayISO());
+      saveDraft();
+      clearConfirm.classList.remove('show');
+      clearPrompt.classList.remove('show');
+      toast('Dias apagados');
+      rebuildAll(); goTo(0);
+    });
+    clearConfirmRow.appendChild(clearConfirmCancel); clearConfirmRow.appendChild(clearConfirmYes);
+    clearConfirm.appendChild(clearConfirmRow);
+
+    clearPromptYes.addEventListener('click',()=>{
+      clearPrompt.classList.remove('show');
+      clearConfirm.classList.add('show');
+    });
+    clearBtn.addEventListener('click',()=>{
+      clearPrompt.classList.remove('show');
+      clearConfirm.classList.add('show');
+      clearConfirm.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+
+    area.appendChild(clearBtn);
+    area.appendChild(clearConfirm);
     s.appendChild(area);
   }
 });
@@ -953,7 +1018,7 @@ function formatDateLong(iso){
 async function exportAll(){
   const entries = loadEntries();
   const list = Object.values(entries).sort((a,b)=> a.date<b.date?-1:1);
-  if(!list.length){ toast('Nenhum dia salvo ainda'); return; }
+  if(!list.length){ toast('Nenhum dia salvo ainda'); return false; }
   const payload = {
     app:'Diário da Flexibilidade Cognitiva',
     versao:1,
@@ -970,8 +1035,8 @@ async function exportAll(){
   if(navigator.canShare && navigator.canShare({files:[file]})){
     try{
       await navigator.share({files:[file], title:'Diário da Flexibilidade', text:'Export do diário'});
-      return;
-    }catch(e){ if(e && e.name==='AbortError') return; }
+      return true;
+    }catch(e){ if(e && e.name==='AbortError') return false; }
   }
   // 2) Fallback: download
   const url = URL.createObjectURL(blob);
@@ -979,6 +1044,7 @@ async function exportAll(){
   a.href=url; a.download=fname; document.body.appendChild(a); a.click();
   a.remove(); URL.revokeObjectURL(url);
   toast(`Exportado (${list.length} ${list.length===1?'dia':'dias'})`);
+  return true;
 }
 
 /* =========================================================
