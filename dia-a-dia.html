@@ -135,10 +135,9 @@ html,body{background:var(--bg);color:var(--text1);font-family:'DM Sans',sans-ser
 .timer-seclbl{font-size:13px;color:var(--text3);margin-top:4px;}
 .timer-done{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--green);margin-top:20px;opacity:0;transition:opacity .4s;}
 .timer-done.show{opacity:1;}
-.timer-adjs{display:flex;gap:10px;margin-top:28px;}
-.timer-adj{background:var(--surface2);border:1px solid var(--border2);border-radius:99px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 22px;cursor:pointer;}
-.timer-adj:active{background:var(--surface3);}
 .timer-close{margin-top:12px;background:none;border:1px solid var(--border);border-radius:99px;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 32px;cursor:pointer;}
+.timer-preset{background:var(--surface2);border:1px solid var(--border2);border-radius:99px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;padding:10px 16px;cursor:pointer;}
+.timer-preset:active{background:var(--surface3);}
 </style>
 </head>
 <body>
@@ -159,9 +158,12 @@ html,body{background:var(--bg);color:var(--text1);font-family:'DM Sans',sans-ser
     </div>
   </div>
   <div class="timer-done" id="tdone">Bora! 💪</div>
-  <div class="timer-adjs">
-    <button class="timer-adj" onclick="adjTimer(-15)">− 15s</button>
-    <button class="timer-adj" onclick="adjTimer(+15)">+ 15s</button>
+  <div style="display:flex;gap:8px;margin-top:28px;flex-wrap:wrap;justify-content:center;padding:0 24px;">
+    <button class="timer-preset" onclick="setTimer(30)">30s</button>
+    <button class="timer-preset" onclick="setTimer(60)">1 min</button>
+    <button class="timer-preset" onclick="setTimer(90)">1:30</button>
+    <button class="timer-preset" onclick="setTimer(120)">2 min</button>
+    <button class="timer-preset" onclick="setTimer(180)">3 min</button>
   </div>
   <button class="timer-close" onclick="stopTimer()">Fechar</button>
 </div>
@@ -283,22 +285,35 @@ const DEF={
     '2026-05-28':'R','2026-05-29':'R',
     '2026-05-30':'A','2026-05-31':'B',
   },
-  reminders:['Você se comprometeu a não comer açúcar hoje','Beber pelo menos 3L de água','Foco total — desligue as distrações'],
+  reminders:[
+    {id:'r1',tx:'Minha medida não é quantas vezes sinto o impulso. Minha medida é quantas vezes escolho voltar.',date:null},
+    {id:'r2',tx:'Não preciso encontrar, preciso estar disponível para ver.',date:null},
+    {id:'r3',tx:'O homem criador não negocia com o que já viu.',date:null},
+    {id:'r4',tx:'Quando há clareza sobre o suficiente, você faz o que precisa e encerra.',date:null},
+    {id:'r5',tx:'O que este dia pede de mim?',date:null},
+    {id:'r6',tx:'Quando estiver confuso, apressado, em dúvida, pensando no futuro, lembre-se de que você só tem um objetivo: stopar correto.',date:null},
+
+
+  ],
   metas:[{id:'m1',tx:'Trabalhar 4h focado'},{id:'m2',tx:'Operar o mercado'},{id:'m3',tx:'Ler um capítulo'}],
   done:{}
 };
 
 let S;
-try{S=JSON.parse(localStorage.getItem('meu-dia-v7'))||JSON.parse(JSON.stringify(DEF));}
+try{S=JSON.parse(localStorage.getItem('meu-dia-v9'))||JSON.parse(JSON.stringify(DEF));}
 catch(e){S=JSON.parse(JSON.stringify(DEF));}
 if(!S.done)S.done={};
 if(!S.planOrder)S.planOrder=['A','B','C'];
 if(!S.restDay)S.restDay={cardio:[{id:'rc1',tx:'Caminhada leve — 20-30min'}],cardioRest:0};
+// migrate old string reminders to new object format
+if(S.reminders&&typeof S.reminders[0]==='string'){
+  S.reminders=S.reminders.map((tx,i)=>({id:'r'+i,tx,date:null}));
+}
 
 let VIEW='hoje', EP=S.planOrder[0]||'A', CSEL=null;
 const TODAY=new Date();
 
-function save(){try{localStorage.setItem('meu-dia-v7',JSON.stringify(S));}catch(e){}}
+function save(){try{localStorage.setItem('meu-dia-v9',JSON.stringify(S));}catch(e){}}
 function uid(){return '_'+Math.random().toString(36).slice(2,8);}
 function tkey(){return TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0');}
 function dk(id){return id+'_'+tkey();}
@@ -323,6 +338,7 @@ function updTimer(){
   arc.style.stroke=tLeft<=10?'#FF6B6B':tLeft<=30?'#F5A623':'#5CBF6A';
 }
 function adjTimer(d){tLeft=Math.max(5,tLeft+d);if(d>0&&tLeft>tTotal)tTotal=tLeft;updTimer();}
+function setTimer(secs){clearInterval(tInt);tTotal=secs;tLeft=secs;document.getElementById('tdone').classList.remove('show');updTimer();tInt=setInterval(()=>{tLeft--;if(tLeft<=0){tLeft=0;updTimer();clearInterval(tInt);document.getElementById('tdone').classList.add('show');if(navigator.vibrate)navigator.vibrate([300,100,300]);}else updTimer();},1000);}
 function stopTimer(){clearInterval(tInt);document.getElementById('tov').classList.remove('show');}
 
 function ticoBtn(secs,label,type){
@@ -371,9 +387,19 @@ function vHoje(){
   </div>`;
 
   if(S.reminders.length){
-    h+=`<div class="sec">Lembretes</div><div class="card">`;
-    S.reminders.forEach(r=>{h+=`<div class="rem-item"><div class="rem-icon">💬</div><span class="rem-text">${r}</span></div>`;});
-    h+=`</div>`;
+    const tk2=tkey();
+    const todayRems=S.reminders.filter(r=>!r.date||r.date===tk2);
+    if(todayRems.length){
+      h+=`<div class="sec">Lembretes</div><div class="card">`;
+      todayRems.forEach(r=>{
+        const isScheduled=!!r.date;
+        h+=`<div class="rem-item">
+          <div class="rem-icon">${isScheduled?'📅':'💬'}</div>
+          <span class="rem-text">${r.tx}</span>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
   }
 
   h+=`<div class="sec">Treino de hoje</div>`;
@@ -554,15 +580,58 @@ function vCal(){
 }
 
 // ── LEMBRETES ──
+function fmtDate(d){
+  if(!d)return '';
+  const [y,m,day]=d.split('-');
+  return day+'/'+m+'/'+y;
+}
 function vLemb(){
-  let h=`<div class="sec">Lembretes do dia</div><div class="card">
-    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);">Aparecem sempre no topo da aba Hoje</div>
-    ${S.reminders.map((r,i)=>`<div class="rem-item"><div class="rem-icon">💬</div><span class="rem-text">${r}</span><button class="rem-del" onclick="delRem(${i})">×</button></div>`).join('')}
-    <div class="add-row"><input class="inp" id="ri" placeholder="Ex: Não comer açúcar hoje..." onkeydown="if(event.key==='Enter')addRem()"></div>
-    <button class="btn btn-full" onclick="addRem()">+ Adicionar lembrete</button>
-  </div>
-  <div class="sec">Metas fixas</div><div class="card">
-    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);">Aparecem todo dia</div>
+  const fixed=S.reminders.filter(r=>!r.date);
+  const scheduled=S.reminders.filter(r=>!!r.date).sort((a,b)=>a.date.localeCompare(b.date));
+
+  let h=`<div class="sec">Lembretes fixos</div><div class="card">
+    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);">Aparecem todo dia no topo da aba Hoje</div>
+    ${fixed.map(r=>`<div class="rem-item">
+      <div class="rem-icon">💬</div>
+      <span class="rem-text">${r.tx}</span>
+      <button class="rem-del" onclick="delRem('${r.id}')">×</button>
+    </div>`).join('')}
+    <div class="add-row">
+      <input class="inp" id="ri" placeholder="Ex: Não comer açúcar hoje..." onkeydown="if(event.key==='Enter')addRem()">
+    </div>
+    <button class="btn btn-full" onclick="addRem()">+ Adicionar lembrete fixo</button>
+  </div>`;
+
+  h+=`<div class="sec">Lembretes agendados</div><div class="card">
+    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);">Aparecem só no dia marcado — consultas, compromissos, eventos</div>`;
+
+  if(scheduled.length){
+    scheduled.forEach(r=>{
+      const isPast=r.date<tkey();
+      h+=`<div class="rem-item" style="${isPast?'opacity:.45':''}">
+        <div class="rem-icon">📅</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;color:var(--text1);line-height:1.4;">${r.tx}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">${fmtDate(r.date)}${isPast?' — já passou':r.date===tkey()?' — hoje!':''}</div>
+        </div>
+        <button class="rem-del" onclick="delRem('${r.id}')">×</button>
+      </div>`;
+    });
+  } else {
+    h+=`<div style="padding:14px 16px;font-size:13px;color:var(--text3);text-align:center;">Nenhum lembrete agendado</div>`;
+  }
+
+  h+=`<div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;">
+    <input class="inp" id="sri" placeholder="Ex: Consulta médica, dentista, reunião...">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="font-size:12px;color:var(--text2);flex-shrink:0;">📅 Data:</div>
+      <input type="date" id="srd" class="inp" style="flex:1;" value="${tkey()}" min="${tkey()}">
+    </div>
+    <button class="btn btn-full" style="margin:0;" onclick="addScheduledRem()">+ Agendar lembrete</button>
+  </div></div>`;
+
+  h+=`<div class="sec">Metas fixas</div><div class="card">
+    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);">Aparecem todo dia na lista de metas</div>
     ${S.metas.map(m=>`<div class="task-row"><span class="task-label">${m.tx}</span><button class="del-btn" onclick="delMeta('${m.id}')">×</button></div>`).join('')}
     <div class="add-row"><input class="inp" id="mci" placeholder="Nova meta fixa..." onkeydown="if(event.key==='Enter')addMetaCfg()"><button class="btn" onclick="addMetaCfg()">+</button></div>
   </div>
@@ -572,6 +641,7 @@ function vLemb(){
     <button onclick="restorePlans()" style="padding:11px;border-radius:var(--r-sm);border:1px solid rgba(245,166,35,0.4);background:rgba(245,166,35,0.08);color:#F5A623;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;width:100%;">↺ Restaurar treinos padrão (A, B, C)</button>
     <button onclick="resetAll()" style="padding:11px;border-radius:var(--r-sm);border:1px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.07);color:#FF6B6B;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;width:100%;">⚠ Apagar tudo e recomeçar do zero</button>
   </div>`;
+
   document.getElementById('mc').innerHTML=h;
 }
 
@@ -668,8 +738,15 @@ function assignDay(key){
   }
   save();render();
 }
-function addRem(){const i=document.getElementById('ri');if(!i||!i.value.trim())return;S.reminders.push(i.value.trim());i.value='';save();render();}
-function delRem(i){S.reminders.splice(i,1);save();render();}
+function addRem(){const i=document.getElementById('ri');if(!i||!i.value.trim())return;S.reminders.push({id:uid(),tx:i.value.trim(),date:null});i.value='';save();render();}
+function addScheduledRem(){
+  const ti=document.getElementById('sri'),di=document.getElementById('srd');
+  if(!ti||!ti.value.trim()){alert('Escreva o lembrete.');return;}
+  if(!di||!di.value){alert('Escolha uma data.');return;}
+  S.reminders.push({id:uid(),tx:ti.value.trim(),date:di.value});
+  ti.value='';di.value='';save();render();
+}
+function delRem(id){S.reminders=S.reminders.filter(r=>r.id!==id);save();render();}
 function addMeta(){const i=document.getElementById('mi');if(!i||!i.value.trim())return;S.metas.push({id:uid(),tx:i.value.trim()});i.value='';save();render();}
 function addMetaCfg(){const i=document.getElementById('mci');if(!i||!i.value.trim())return;S.metas.push({id:uid(),tx:i.value.trim()});i.value='';save();render();}
 function delMeta(id){S.metas=S.metas.filter(m=>m.id!==id);save();render();}
