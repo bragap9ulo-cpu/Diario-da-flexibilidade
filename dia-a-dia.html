@@ -25,8 +25,9 @@
   --r:10px;--r-sm:7px;--nav-h:68px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{color-scheme:dark;}
 html,body{background:var(--bg);color:var(--text1);font-family:'DM Sans',sans-serif;min-height:100vh;overscroll-behavior:none;}
-.app{max-width:430px;margin:0 auto;padding-bottom:calc(var(--nav-h)+16px);}
+.app{max-width:430px;margin:0 auto;padding-bottom:calc(var(--nav-h) + 24px);}
 .header{padding:52px 20px 12px;}
 .header-date{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;color:var(--text1);line-height:1;}
@@ -121,6 +122,36 @@ html,body{background:var(--bg);color:var(--text1);font-family:'DM Sans',sans-ser
 .nav-item.act .nav-label{color:var(--text1);}
 .nav-item.act svg path,.nav-item.act svg rect,.nav-item.act svg circle{stroke:var(--text1)!important;}
 .nav-item:not(.act) svg path,.nav-item:not(.act) svg rect,.nav-item:not(.act) svg circle{stroke:var(--text2)!important;}
+/* CORPO / MEDIDAS */
+.cal-tip{font-size:11px;color:var(--text3);text-align:center;padding:10px 16px 14px;line-height:1.5;}
+.seg{display:flex;margin:0 16px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;gap:3px;}
+.seg button{flex:1;background:none;border:none;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:12px;padding:7px;border-radius:5px;cursor:pointer;}
+.seg button.act{background:var(--surface3);color:var(--text1);}
+.mhdr{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:var(--text1);margin-bottom:12px;letter-spacing:.03em;}
+.mhdr span{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:400;color:var(--text3);margin-left:6px;}
+.bstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.bstat{background:var(--surface2);border-radius:var(--r-sm);padding:10px 6px;text-align:center;}
+.bstat-v{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;line-height:1;}
+.bstat-v small,.mrow-v small{font-size:11px;color:var(--text3);font-weight:500;margin-left:2px;}
+.bstat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+.bstat .dl{display:block;margin-top:4px;}
+.dl{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;}
+.mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);}
+.mrow:last-child{border-bottom:none;}
+.mrow-l{font-size:13px;color:var(--text2);}
+.mrow-h{font-size:10px;color:var(--text3);margin-top:2px;}
+.mrow-v{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:var(--text1);display:flex;align-items:baseline;gap:8px;white-space:nowrap;}
+.mrow-v .dl{min-width:42px;text-align:right;}
+.mb-hd,.mb-row{display:grid;grid-template-columns:1fr 70px 70px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border);}
+.mb-hd{padding:7px 16px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;text-align:center;}
+.mb-row:last-child{border-bottom:none;}
+.mb-v{display:flex;flex-direction:column;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:600;line-height:1.15;}
+.mb-v .dl{font-size:12px;}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;}
+.frow label{font-size:13px;color:var(--text2);flex:1;}
+.frow label span{color:var(--text3);font-size:11px;}
+.fin{width:90px;font-size:16px;padding:7px 4px;}
+
 .timer-ov{position:fixed;inset:0;background:rgba(0,0,0,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:300;}
 .timer-ov.show{display:flex;}
 .timer-type{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
@@ -178,6 +209,7 @@ html,body{background:var(--bg);color:var(--text1);font-family:'DM Sans',sans-ser
   <div class="nav-item act" data-v="hoje"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 20v-7h6v7" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg></div><span class="nav-label">Hoje</span></div>
   <div class="nav-item" data-v="treinos"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="5" cy="11" r="2" stroke="#fff" stroke-width="1.5"/><circle cx="17" cy="11" r="2" stroke="#fff" stroke-width="1.5"/><path d="M7 11h8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M3 11H1M21 11h-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nav-label">Treinos</span></div>
   <div class="nav-item" data-v="cal"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="5" width="16" height="15" rx="2" stroke="#fff" stroke-width="1.5"/><path d="M3 9h16M8 2v4M14 2v4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nav-label">Calendário</span></div>
+  <div class="nav-item" data-v="corpo"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="4" stroke="#fff" stroke-width="1.5"/><path d="M7.5 10a5 5 0 017 0" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M11 10l1.6-2.2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nav-label">Corpo</span></div>
   <div class="nav-item" data-v="lemb"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11a7 7 0 0114 0v2l1.5 2H2.5L4 13v-2z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 4V2M8 20c0 1.1 1.343 2 3 2s3-.9 3-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="nav-label">Lembretes</span></div>
 </div>
 
@@ -203,6 +235,54 @@ const MOS=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto
 const WDS=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 const CHK='<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><polyline points="1.5,5.5 4.5,8.5 9.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CIRC=615.75;
+
+// ── CAMPOS DE MEDIÇÃO ──
+// d: 1 = subir é bom (verde), -1 = descer é bom (verde), 0 = neutro
+const COMP=[
+  {k:'peso',  l:'Peso',                  u:'kg',   d:-1},
+  {k:'imc',   l:'IMC',                   u:'',     d:-1},
+  {k:'gord',  l:'Gordura',               u:'%',    d:-1},
+  {k:'gordKg',l:'Peso da gordura',       u:'kg',   d:-1},
+  {k:'mmePct',l:'Músculo esquelético',   u:'%',    d:1},
+  {k:'mmeKg', l:'Músculo esquelético',   u:'kg',   d:1},
+  {k:'mmPct', l:'Massa muscular',        u:'%',    d:1},
+  {k:'mmKg',  l:'Massa muscular',        u:'kg',   d:1},
+  {k:'visc',  l:'Gordura visceral',      u:'',     d:-1},
+  {k:'agua',  l:'Água',                  u:'%',    d:1},
+  {k:'aguaKg',l:'Peso da água',          u:'kg',   d:1},
+  {k:'tmb',   l:'Metabolismo basal',     u:'kcal', d:1},
+  {k:'lbm',   l:'Massa magra (LBM)',     u:'kg',   d:1},
+  {k:'idMet', l:'Idade metabólica',      u:'anos', d:-1},
+];
+const TR=[
+  {k:'pesc', l:'Pescoço', d:0},
+  {k:'ombro',l:'Ombros',  d:1},
+  {k:'peito',l:'Peito',   d:0},
+  {k:'cint', l:'Cintura', d:-1},
+  {k:'abd',  l:'Abdômen', d:-1},
+  {k:'quad', l:'Quadril', d:-1},
+];
+const MB=[
+  {k:'cxp', l:'Coxa proximal',  d:0},
+  {k:'cxm', l:'Coxa medial',    d:0},
+  {k:'cxd', l:'Coxa distal',    d:0},
+  {k:'pant',l:'Panturrilha',    d:0},
+  {k:'brr', l:'Braço relaxado', d:1},
+  {k:'brc', l:'Braço contraído',d:1},
+  {k:'ant', l:'Antebraço',      d:0},
+];
+const CHS=[
+  {k:'peso',l:'Peso'},{k:'gord',l:'Gordura %'},{k:'cint',l:'Cintura'},
+  {k:'abd',l:'Abdômen'},{k:'mmKg',l:'Músculo kg'},{k:'visc',l:'Visceral'},
+];
+const MED1={
+  id:'m_20261113',date:'2026-11-13',alt:174,
+  peso:86.45,imc:28.6,gord:28.4,gordKg:24.5,mmePct:36.0,mmeKg:31.1,mmPct:67.7,mmKg:58.5,
+  visc:17.5,agua:51.6,aguaKg:44.6,tmb:1726,lbm:61.9,idMet:53,
+  pesc:40.3,ombro:122,peito:105,cint:99,abd:103,quad:106,
+  cxp_d:59,cxp_e:58,cxm_d:52.8,cxm_e:52.3,cxd_d:46,cxd_e:44.8,
+  pant_d:40.2,pant_e:39.7,brr_d:33,brr_e:32.7,brc_d:35,brc_e:34.8,ant_d:26.7,ant_e:26.9
+};
 
 function pc(key){
   if(!S)return PALETTE[0];
@@ -319,9 +399,12 @@ const DEF={
     {id:'r8',tx:'Se estou buscando alívio, não estou buscando uma operação',date:null},
   ],
   metas:[{id:'m1',tx:'Trabalhar 4h focado'},{id:'m2',tx:'Operar o mercado'},{id:'m3',tx:'Ler um capítulo'}],
+  medidas:[MED1],
+  altura:174,
   done:{}
 };
 
+function uid(){return '_'+Math.random().toString(36).slice(2,8);}
 let S;
 try{S=JSON.parse(localStorage.getItem('meu-dia-v10'))||JSON.parse(JSON.stringify(DEF));}
 catch(e){S=JSON.parse(JSON.stringify(DEF));}
@@ -335,11 +418,23 @@ if(S.reminders&&typeof S.reminders[0]==='string'){
   S.reminders=S.reminders.map((tx,i)=>({id:'r'+i,tx,date:null}));
 }
 
+if(!S.medidas)S.medidas=[JSON.parse(JSON.stringify(MED1))];
+if(!S.altura)S.altura=174;
+// Lembretes novos colocados no código (DEF) entram no celular mesmo com dados já salvos.
+// Cada um entra uma única vez: se você apagar depois, não volta.
+if(!S.remSeed)S.remSeed=[];
+DEF.reminders.forEach(r=>{
+  if(S.remSeed.includes(r.tx))return;
+  if(!S.reminders.some(x=>x.tx===r.tx))S.reminders.push({id:uid(),tx:r.tx,date:r.date||null});
+  S.remSeed.push(r.tx);
+});
+try{localStorage.setItem('meu-dia-v10',JSON.stringify(S));}catch(e){}
+
 let VIEW='hoje', EP=S.planOrder[0]||'A', CSEL=null;
+let MMODE='view', MIDX=null, MCMP='prev', MCH='peso', MEDIT=null;
 const TODAY=new Date();
 
 function save(){try{localStorage.setItem('meu-dia-v10',JSON.stringify(S));}catch(e){}}
-function uid(){return '_'+Math.random().toString(36).slice(2,8);}
 function tkey(){return TODAY.getFullYear()+'-'+String(TODAY.getMonth()+1).padStart(2,'0')+'-'+String(TODAY.getDate()).padStart(2,'0');}
 function dk(id){return id+'_'+tkey();}
 function isDone(id){return !!S.done[dk(id)];}
@@ -668,6 +763,167 @@ function vCal(){
   document.getElementById('mc').innerHTML=h;
 }
 
+// ── CORPO (MEDIDAS) ──
+function sortedM(){return S.medidas.slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);}
+function fmtD(d){const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function fmtS(d){const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0].slice(2);}
+function has(v){return v!=null&&v!==''&&!isNaN(v);}
+function fmtN(v){return has(v)?(+v).toLocaleString('pt-BR',{maximumFractionDigits:2}):'—';}
+function delta(cur,ref,dir){
+  if(!has(cur)||!has(ref))return '';
+  const d=+(cur-ref).toFixed(2);
+  if(d===0)return `<span class="dl" style="color:var(--text3)">=</span>`;
+  const c=dir===0?'var(--text2)':(d*dir>0?'var(--green)':'var(--red)');
+  return `<span class="dl" style="color:${c}">${d>0?'+':''}${d.toLocaleString('pt-BR',{maximumFractionDigits:2})}</span>`;
+}
+function mrow(l,v,u,dl){
+  return `<div class="mrow"><div class="mrow-l">${l}</div><div class="mrow-v"><span>${fmtN(v)}<small>${u}</small></span>${dl}</div></div>`;
+}
+function idxRow(l,v,c,hint){
+  return `<div class="mrow"><div class="mrow-l">${l}<div class="mrow-h">${hint}</div></div><div class="mrow-v" style="color:${c}">${v==null?'—':v.toFixed(2).replace('.',',')}</div></div>`;
+}
+function chart(L,k){
+  const pts=L.filter(m=>has(m[k]));
+  if(pts.length<2)return `<div class="cal-tip" style="padding:14px 0 4px;">O gráfico aparece a partir da 2ª medição.</div>`;
+  const W=340,H=140,px=28,py=22;
+  const vs=pts.map(m=>+m[k]);let mn=Math.min(...vs),mx=Math.max(...vs);if(mn===mx){mn-=1;mx+=1;}
+  const ts=pts.map(m=>new Date(m.date+'T12:00:00').getTime());
+  const t0=ts[0],t1=ts[ts.length-1];
+  const X=i=>px+(t1===t0?0:(ts[i]-t0)/(t1-t0))*(W-2*px);
+  const Y=v=>py+(1-(v-mn)/(mx-mn))*(H-2*py-8);
+  const poly=pts.map((m,i)=>X(i).toFixed(1)+','+Y(+m[k]).toFixed(1)).join(' ');
+  const n=pts.length-1;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">
+    <polyline points="${poly}" fill="none" stroke="#F5A623" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${pts.map((m,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(+m[k]).toFixed(1)}" r="3.5" fill="#0A0A0A" stroke="#F5A623" stroke-width="2"/>`).join('')}
+    <text x="${X(0)}" y="${Y(+pts[0][k])-9}" fill="#AAA" font-size="11" font-family="DM Sans" text-anchor="start">${fmtN(pts[0][k])}</text>
+    <text x="${X(n)}" y="${Y(+pts[n][k])-9}" fill="#F0EEE8" font-size="11" font-family="DM Sans" text-anchor="end">${fmtN(pts[n][k])}</text>
+    <text x="${px}" y="${H-3}" fill="#777" font-size="10" font-family="DM Sans">${fmtS(pts[0].date)}</text>
+    <text x="${W-px}" y="${H-3}" fill="#777" font-size="10" font-family="DM Sans" text-anchor="end">${fmtS(pts[n].date)}</text>
+  </svg>`;
+}
+
+function vCorpo(){
+  if(MMODE==='form')return vCorpoForm();
+  const L=sortedM();
+  let h='';
+  if(!L.length){
+    h+=`<div class="card"><div class="rest-day"><h2>Sem medições</h2><p>Registre sua primeira avaliação.</p></div></div>
+    <button class="btn btn-full" onclick="newMed()">+ Nova medição</button>`;
+    document.getElementById('mc').innerHTML=h;return;
+  }
+  if(MIDX==null||MIDX<0||MIDX>=L.length)MIDX=L.length-1;
+  const cur=L[MIDX];
+  const ref=MIDX>0?(MCMP==='first'?L[0]:L[MIDX-1]):null;
+
+  // chips de data
+  h+=`<div class="plan-tab-wrap">${L.map((m,i)=>`<button class="ptab ${i===MIDX?'act':''}" style="font-size:15px;${i===MIDX?'color:var(--amber);border-color:#F5A623':''}" onclick="MIDX=${i};render();">${fmtS(m.date)}</button>`).join('')}<button class="ptab-add" onclick="newMed()">+</button></div>`;
+
+  if(MIDX>0){
+    h+=`<div class="seg"><button class="${MCMP==='prev'?'act':''}" onclick="MCMP='prev';render();">vs anterior</button><button class="${MCMP==='first'?'act':''}" onclick="MCMP='first';render();">vs 1ª medição</button></div>`;
+  }
+
+  const big=(k,l,u,d)=>`<div class="bstat"><div class="bstat-v">${fmtN(cur[k])}<small>${u}</small></div><div class="bstat-l">${l}</div>${ref?delta(cur[k],ref[k],d):''}</div>`;
+  h+=`<div class="card card-pad">
+    <div class="mhdr">${fmtD(cur.date)}${ref?`<span>vs ${fmtD(ref.date)}</span>`:(MIDX===0?'<span>medição base</span>':'')}</div>
+    <div class="bstats">${big('peso','Peso','kg',-1)}${big('gord','Gordura','%',-1)}${big('cint','Cintura','cm',-1)}</div>
+  </div>`;
+
+  // índices
+  const alt=cur.alt||S.altura;
+  const rcq=has(cur.cint)&&has(cur.quad)?cur.cint/cur.quad:null;
+  const rce=has(cur.cint)&&alt?cur.cint/alt:null;
+  const lvl=(v,a,b)=>v==null?'var(--text3)':v<a?'var(--green)':v<b?'var(--amber)':'var(--red)';
+  h+=`<div class="sec">Índices</div><div class="card">
+    ${idxRow('Relação cintura/quadril',rcq,lvl(rcq,0.90,1.0),'referência homens: abaixo de 0,90')}
+    ${idxRow('Relação cintura/altura',rce,lvl(rce,0.50,0.60),'referência: abaixo de 0,50')}
+  </div>`;
+
+  // gráfico
+  h+=`<div class="sec">Evolução</div><div class="card card-pad">
+    <div class="cal-pills" style="padding:0;margin-bottom:10px;">${CHS.map(c=>`<button class="cal-pill ${MCH===c.k?'sel':''}" style="${MCH===c.k?'background:var(--amber-bg);color:var(--amber);border-color:#F5A623':''}" onclick="MCH='${c.k}';render();">${c.l}</button>`).join('')}</div>
+    ${chart(L,MCH)}
+  </div>`;
+
+  // composição
+  h+=`<div class="sec">Composição (balança)</div><div class="card">${COMP.map(f=>mrow(f.l,cur[f.k],f.u,ref?delta(cur[f.k],ref[f.k],f.d):'')).join('')}</div>`;
+
+  // tronco
+  h+=`<div class="sec">Tronco (cm)</div><div class="card">${TR.map(f=>mrow(f.l,cur[f.k],'',ref?delta(cur[f.k],ref[f.k],f.d):'')).join('')}</div>`;
+
+  // membros
+  h+=`<div class="sec">Membros (cm)</div><div class="card">
+    <div class="mb-hd"><span></span><span>Dir.</span><span>Esq.</span></div>
+    ${MB.map(f=>{
+      const kd=f.k+'_d',ke=f.k+'_e';
+      return `<div class="mb-row"><span class="mrow-l">${f.l}</span>
+        <span class="mb-v">${fmtN(cur[kd])}${ref?delta(cur[kd],ref[kd],f.d):''}</span>
+        <span class="mb-v">${fmtN(cur[ke])}${ref?delta(cur[ke],ref[ke],f.d):''}</span></div>`;
+    }).join('')}
+  </div>`;
+
+  h+=`<div style="display:flex;gap:8px;margin:12px 16px 0;">
+    <button class="btn" style="flex:1;background:var(--amber-bg);border-color:#F5A623;color:var(--amber);" onclick="newMed()">+ Nova medição</button>
+    <button class="btn" onclick="editMed('${cur.id}')">Editar</button>
+    <button class="btn" style="color:var(--red);" onclick="delMed('${cur.id}')">Excluir</button>
+  </div>
+  <div class="cal-tip">Verde = melhorou · Vermelho = piorou · Cinza = neutro.<br>Meça sempre no mesmo horário, em jejum, após ir ao banheiro.</div>`;
+
+  document.getElementById('mc').innerHTML=h;
+}
+
+function vCorpoForm(){
+  const L=sortedM();
+  const e=MEDIT?S.medidas.find(m=>m.id===MEDIT):null;
+  const last=L[L.length-1]||{};
+  const sv=x=>has(x)?String(x).replace('.',','):'';
+  const fi=(k,l,u)=>`<div class="frow"><label>${l}${u?` <span>${u}</span>`:''}</label><input class="inp-num fin" id="f_${k}" inputmode="decimal" autocomplete="off" value="${e?sv(e[k]):''}" placeholder="${sv(last[k])}"></div>`;
+  let h=`<div class="sec">${e?'Editar medição':'Nova medição'}</div>
+  <div class="card card-pad">
+    <div class="frow"><label>Data</label><input class="inp" type="date" id="f_date" value="${e?e.date:tkey()}" style="width:170px"></div>
+    <div class="frow"><label>Altura <span>cm</span></label><input class="inp-num fin" id="f_alt" inputmode="decimal" value="${sv((e&&e.alt)||S.altura)}"></div>
+  </div>`;
+  h+=`<div class="sec">Balança</div><div class="card card-pad">${COMP.map(f=>fi(f.k,f.l,f.u)).join('')}</div>`;
+  h+=`<div class="sec">Tronco</div><div class="card card-pad">${TR.map(f=>fi(f.k,f.l,'cm')).join('')}</div>`;
+  h+=`<div class="sec">Membros</div><div class="card card-pad">${MB.map(f=>fi(f.k+'_d',f.l+' — dir.','cm')+fi(f.k+'_e',f.l+' — esq.','cm')).join('')}</div>`;
+  h+=`<div style="display:flex;gap:8px;margin:12px 16px 0;">
+    <button class="btn" style="flex:1;" onclick="MMODE='view';MEDIT=null;render();window.scrollTo(0,0);">Cancelar</button>
+    <button class="btn" style="flex:2;background:var(--amber-bg);border-color:#F5A623;color:var(--amber);" onclick="saveMed()">Salvar medição</button>
+  </div>
+  <div class="cal-tip">Em cinza: valor da última medição. Campo vazio fica em branco.<br>IMC é calculado sozinho se ficar vazio.</div>`;
+  document.getElementById('mc').innerHTML=h;
+}
+
+function newMed(){MMODE='form';MEDIT=null;render();window.scrollTo(0,0);}
+function editMed(id){MMODE='form';MEDIT=id;render();window.scrollTo(0,0);}
+function delMed(id){
+  const m=S.medidas.find(x=>x.id===id);if(!m)return;
+  if(!confirm('Excluir a medição de '+fmtD(m.date)+'?'))return;
+  S.medidas=S.medidas.filter(x=>x.id!==id);
+  MIDX=null;save();render();
+}
+function saveMed(){
+  const date=document.getElementById('f_date').value;
+  if(!date){alert('Informe a data.');return;}
+  const num=id=>{const el=document.getElementById(id);if(!el)return null;const s=el.value.trim().replace(',','.');if(s==='')return null;const n=parseFloat(s);return isNaN(n)?null:n;};
+  const keys=[...COMP.map(f=>f.k),...TR.map(f=>f.k),...MB.flatMap(f=>[f.k+'_d',f.k+'_e'])];
+  const m={id:MEDIT||uid(),date,alt:num('f_alt')};
+  keys.forEach(k=>{m[k]=num('f_'+k);});
+  if(m.alt)S.altura=m.alt;
+  if(m.imc==null&&m.peso&&m.alt)m.imc=+(m.peso/Math.pow(m.alt/100,2)).toFixed(1);
+  const dup=S.medidas.find(x=>x.date===date&&x.id!==MEDIT);
+  if(dup){
+    if(!confirm('Já existe medição em '+fmtD(date)+'. Substituir?'))return;
+    S.medidas=S.medidas.filter(x=>x.id!==dup.id);
+  }
+  S.medidas=S.medidas.filter(x=>x.id!==m.id);
+  S.medidas.push(m);
+  save();
+  MMODE='view';MEDIT=null;
+  MIDX=sortedM().findIndex(x=>x.id===m.id);
+  render();window.scrollTo(0,0);
+}
+
 // ── LEMBRETES ──
 function fmtDate(d){
   if(!d)return '';const [y,m,day]=d.split('-');return day+'/'+m+'/'+y;
@@ -720,7 +976,7 @@ function vLemb(){
   </div>
   <div class="sec">Dados</div>
   <div class="card card-pad" style="display:flex;flex-direction:column;gap:10px;">
-    <div style="font-size:13px;color:var(--text2);">Restaura todos os treinos, exercícios, calendário e configurações para o padrão original. Lembretes e metas personalizados são mantidos.</div>
+    <div style="font-size:13px;color:var(--text2);">Restaura todos os treinos, exercícios, calendário e configurações para o padrão original. Lembretes, metas e medidas corporais são mantidos.</div>
     <button onclick="restorePlans()" style="padding:11px;border-radius:var(--r-sm);border:1px solid rgba(245,166,35,0.4);background:rgba(245,166,35,0.08);color:#F5A623;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;width:100%;">↺ Restaurar treinos padrão (A, B, C, D)</button>
     <button onclick="resetAll()" style="padding:11px;border-radius:var(--r-sm);border:1px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.07);color:#FF6B6B;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;width:100%;">⚠ Apagar tudo e recomeçar do zero</button>
   </div>`;
@@ -738,8 +994,8 @@ function restorePlans(){
   alert('Treinos restaurados com sucesso! ✅');
 }
 function resetAll(){
-  if(!confirm('⚠ Apagar TUDO e voltar ao estado inicial?\n\nEssa ação não pode ser desfeita.'))return;
-  S=JSON.parse(JSON.stringify(DEF));EP=S.planOrder[0];save();render();
+  if(!confirm('⚠ Apagar TUDO e voltar ao estado inicial?\n\nIsso inclui as medidas corporais. Essa ação não pode ser desfeita.'))return;
+  S=JSON.parse(JSON.stringify(DEF));S.remSeed=DEF.reminders.map(r=>r.tx);EP=S.planOrder[0];MIDX=null;save();render();
   alert('App resetado com sucesso! ✅');
 }
 
@@ -789,12 +1045,13 @@ function addMeta(){const i=document.getElementById('mi');if(!i||!i.value.trim())
 function addMetaCfg(){const i=document.getElementById('mci');if(!i||!i.value.trim())return;S.metas.push({id:uid(),tx:i.value.trim()});i.value='';save();render();}
 function delMeta(id){S.metas=S.metas.filter(m=>m.id!==id);save();render();}
 
-function render(){setHdr();({hoje:vHoje,treinos:vTreinos,cal:vCal,lemb:vLemb}[VIEW]||vHoje)();}
+function render(){setHdr();({hoje:vHoje,treinos:vTreinos,cal:vCal,corpo:vCorpo,lemb:vLemb}[VIEW]||vHoje)();}
 document.getElementById('bnav').addEventListener('click',e=>{
   const item=e.target.closest('[data-v]');if(!item)return;
   VIEW=item.dataset.v;
+  if(VIEW==='corpo'){MMODE='view';MEDIT=null;}
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('act'));
-  item.classList.add('act');render();
+  item.classList.add('act');render();window.scrollTo(0,0);
 });
 render();
 </script>
